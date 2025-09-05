@@ -1,3 +1,9 @@
+# 屏蔽提交版本
+Update/
+
+# 屏蔽缓存
+.virtual_documents/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
