@@ -1,12 +1,12 @@
 import numpy as np
 
-def bifurcation_diagram(ax, map_func, r_range, x_range, n_step, n_sample, **kwargs):
+def bifurcation_diagram(ax, map_func, r_range, x_range, n_warm, n_sample, **kwargs):
     r = np.linspace(r_range[0], r_range[1], r_range[2])
     x = np.random.uniform(x_range[0], x_range[1], x_range[2])
     r_tmp = r.reshape(r_range[2], 1) # 转为列向量，为了利用 broadcast
 
     # 到达稳定状态
-    for _ in range(n_step):
+    for _ in range(n_warm):
         x = map_func(r_tmp, x)
 
     result = np.zeros((r_range[2], x_range[2], n_sample))

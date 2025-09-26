@@ -1,35 +1,24 @@
 '''
 Symplectic Partitioned Runge-Kutta
 8 阶的辛分区 Runge-Kutta 法求解器
+
+使用 Yoshida 给出的高精度 8 阶辛积分器系数
 '''
 import numpy as np
 import numba as nb
 
-def _SPRK_core(gradT, gradV, q0, p0, dt, n_step):
-    # 辛积分器的常数，来自文献：
-    # Laskar, J., & Robutel, P. (2001). High order symplectic integrators for the Solar System. Celestial Mechanics and Dynamical Astronomy, 80(1), 39-62.
-
-    C_COEFFS = np.array([
-        0.195557812560339,
-        0.433890397482848,
-        -0.207886431443621,
-        0.078438221400434,
-        0.078438221400434,
-        -0.207886431443621,
-        0.433890397482848,
-        0.195557812560339,
-    ])
-    
-    D_COEFFS = np.array([
-        0.0977789062801695,
-        0.289196093121589,
-        0.252813583900000,
-        -0.139788583301759,
-        -0.139788583301759,
-        0.252813583900000,
-        0.289196093121589,
-        0.0977789062801695,
-    ])
+def _Yo8_core(gradT, gradV, q0, p0, dt, n_step):
+    C_COEFFS = np.array([0.521213104349955, 1.431316259203525, 0.988973118915378,
+                         1.298883627145484, 1.216428715985135, -1.227080858951161,
+                         -2.031407782603105, -1.698326184045211, -1.698326184045211,
+                         -2.031407782603105, -1.227080858951161, 1.216428715985135,
+                         1.298883627145484, 0.988973118915378, 1.431316259203525,
+                         0.521213104349955])
+    D_COEFFS = np.array([1.04242620869991, 1.82020630970714, 0.157739928123617,
+                         2.44002732616735, -0.007169894197081, -2.44699182370524,
+                         -1.61582374150097, -1.780828626589452, -1.61582374150097,
+                         -2.44699182370524, -0.007169894197081, 2.44002732616735,
+                         0.157739928123617, 1.82020630970714, 1.04242620869991])
     q_save = np.zeros((n_step + 1, len(q0)))
     p_save = np.zeros((n_step + 1, len(p0)))
 
@@ -40,14 +29,15 @@ def _SPRK_core(gradT, gradV, q0, p0, dt, n_step):
     p = p0.copy()
 
     for i in range(n_step):
-        for j in range(8):
-            q += D_COEFFS[j] * gradT(p) * dt
-            p -= C_COEFFS[j] * gradV(q) * dt
+        for j in range(15):
+            p -= C_COEFFS[i] * gradV(q) * dt
+            q += D_COEFFS[i] * gradT(p) * dt
+        p -= C_COEFFS[15] * gradV(q) * dt
         q_save[i+1] = q
         p_save[i+1] = p
     return q_save, p_save
 
-def SPRK8(
+def Yo8(
         gradT: callable[[np.ndarray], np.ndarray],
         gradV: callable[[np.ndarray], np.ndarray],
         q0: np.ndarray,
@@ -110,9 +100,42 @@ def SPRK8(
                  isinstance(gradV, nb.core.dispatcher.Dispatcher))
 
     if is_jitted:
-        loop_func = nb.njit(_SPRK_core)
+        loop_func = nb.njit(_Yo8_core)
     else:
         print("Warning: One or both gradient functions are not numba-compiled, may be slow.")
         loop_func = _SPRK_core
     q, p = loop_func(gradT, gradV, q0, p0, dt, n_step)
     return t_eval, q, p
+
+@nb.njit()
+def Yo8_step(q, p, m, dt):
+    q = q.copy()
+    p = p.copy()
+
+    def gradT(p, m):
+        return p / m
+
+    def gradV(q):
+        dV = lambda x: x + alpha * x**2
+        q_m1 = np.zeros(N)
+        q_m1[1:] = q[:-1]
+        q_p1 = np.zeros(N)
+        q_p1[:-1] = q[1:]
+        return dV(q - q_m1) - dV(q_p1 - q)
+
+    C_COEFFS = np.array([0.521213104349955, 1.431316259203525, 0.988973118915378,
+                         1.298883627145484, 1.216428715985135, -1.227080858951161,
+                         -2.031407782603105, -1.698326184045211, -1.698326184045211,
+                         -2.031407782603105, -1.227080858951161, 1.216428715985135,
+                         1.298883627145484, 0.988973118915378, 1.431316259203525,
+                         0.521213104349955])
+    D_COEFFS = np.array([1.04242620869991, 1.82020630970714, 0.157739928123617,
+                         2.44002732616735, -0.007169894197081, -2.44699182370524,
+                         -1.61582374150097, -1.780828626589452, -1.61582374150097,
+                         -2.44699182370524, -0.007169894197081, 2.44002732616735,
+                         0.157739928123617, 1.82020630970714, 1.04242620869991])
+    for i in range(15):
+        p -= C_COEFFS[i] * gradV(q) * dt
+        q += D_COEFFS[i] * gradT(p, m) * dt
+    p -= C_COEFFS[15] * gradV(q) * dt
+    return q, p
