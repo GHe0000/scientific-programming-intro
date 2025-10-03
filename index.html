@@ -3,13 +3,27 @@ layout: default
 title: 目录
 ---
 
-# 文件目录
 
-<ul>
-  {% assign files = site.static_files | where: "extname", ".html" %}
-  {% for file in files %}
-    {% if file.path contains '/web/' %}
-      <li><a href="{{ file.path | relative_url }}">{{ file.name }}</a></li>
-    {% endif %}
-  {% endfor %}
-</ul>
+<h1> 文件目录 </h1>
+
+<p>本页面自动生成于：{{ site.time | date: "%Y-%m-%d %H:%M:%S" }}</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>链接</th>
+      <th>最后更新时间</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% assign files = site.static_files | where: "extname", ".html" %}
+    {% for file in files %}
+      {% if file.path contains '/web/' %}
+        <tr>
+          <td><a href="{{ file.path | relative_url }}">{{ file.name }}</a></td>
+          <td>{{ file.modified_time | date: "%Y-%m-%d %H:%M" }}</td>
+        </tr>
+      {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
