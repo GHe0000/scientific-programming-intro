@@ -1,67 +1,49 @@
 import numpy as np
+from numba import njit, prange
+
+@njit
+def calc_cycle_single(r, x0=0.0, tol=1e-6, n_warm=1000, max_period=32):
+    """
+    检测给定 r 的周期数（最大为 max_period）
+    超过 max_period 或无循环则返回 -1
+    """
+    # 预热迭代，使轨道进入吸引子附近
+    x = x0
+    for _ in range(n_warm):
+        x = r - x * x
+
+    # 保存轨道点（仅最多 max_period+1 个）
+    xs = np.empty(max_period + 1)
+    xs[0] = x
+    n_stored = 1
+
+    for n in range(1, max_period + 1):
+        x = r - x * x
+        # 检查是否与已有点接近
+        for i in range(n_stored):
+            if abs(x - xs[i]) < tol:
+                return n - i  # 周期长度
+        xs[n_stored] = x
+        n_stored += 1
+
+    # 超过 max_period 仍无重复，视为无周期
+    return -1
+
+@njit(parallel=True)
+def detect_periods(r_arr, tol=1e-6, n_warm=1000, max_iter=2000, max_period=32):
+    n = len(r_arr)
+    periods = np.empty(n, dtype=np.int32)
+    for i in prange(n):
+        periods[i] = detect_period(r_arr[i], tol, n_warm, max_iter, max_period)
+    return periods
+
+
+
+r_arr = np.linspace(0, 1.41, 5000)
+periods = detect_periods(r_arr, tol=1e-10, n_warm=1000, max_iter=2000, max_period=64)
+
+# 绘制周期图
 import matplotlib.pyplot as plt
-
-def find_point(check_func, r_arr, tol=1e-6, max_step=50):
-    a = r_arr[:, 0].copy()
-    b = r_arr[:, 1].copy()
-    for _ in range(max_step):
-        mid = 0.5 * (a + b)
-        check = check_func(mid)
-        check = np.asarray(check, dtype=bool)
-        a = np.where(check, mid, a)
-        b = np.where(check, b, mid)
-        if np.all(np.abs(b - a) < tol):
-            break
-    return 0.5 * (a + b)
-
-def make_classifier(r, tol=1e-6, max_step=500):
-    x_star1 = (1 + np.sqrt(4*r-3)) / 2.0
-    x_star2 = (1 - np.sqrt(4*r-3)) / 2.0
-    def classify(x0):
-        x = x0.copy()
-        for _ in range(max_step):
-            x = r - x**2
-        return np.where(np.abs(x-x_star1) < np.abs(x-x_star2), 0, 1)
-    return classify
-
-def find_boundaries_single(r, n_grid=2000):
-    domain = (-(np.sqrt(4*r+1)+1)/2, (np.sqrt(4*r+1)+1)/2)
-    classify = make_classifier(r)
-    
-    xs = np.linspace(domain[0], domain[1], n_grid)
-    labels = classify(xs)
-
-    change_idx = np.where(labels[:-1] != labels[1:])[0]
-    boundaries = []
-    for idx in change_idx:
-        a, b = xs[idx], xs[idx+1]
-        def check_func(mid):
-            return classify(np.array([a]))[0] != classify(np.array([mid]))[0]
-        root = find_point(lambda mid: [check_func(mid[0])], np.array([[a,b]]))
-        boundaries.append(root[0])
-    return np.array(boundaries)
-
-def find_boundaries_batch(r_arr, n_grid=2000):
-    results = []
-    for r in r_arr:
-        try:
-            bounds = find_boundaries_single(r, n_grid=n_grid)
-        except Exception:
-            bounds = np.array([])
-        results.append(bounds)
-    return results
-
-def plot_boundaries(r_arr, results):
-    plt.figure(figsize=(8,6))
-    for r, bounds in zip(r_arr, results):
-        plt.scatter([r]*len(bounds), bounds, c="k", s=5)
-    plt.xlabel("r")
-    plt.ylabel("分界点位置")
-    plt.title("周期二不同轨道的吸引域分界点随 r 的变化")
-    plt.grid(alpha=0.3)
-    plt.show()
-
-# 示例
-r_arr = np.linspace(0.8, 1.25, 200)
-results = find_boundaries_batch(r_arr, n_grid=1000)
-plot_boundaries(r_arr, results)
+mask = (periods > 0)
+plt.plot(r_arr[mask], periods[mask], ".", ms=2)
+plt.show()
