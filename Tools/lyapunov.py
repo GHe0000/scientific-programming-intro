@@ -69,15 +69,19 @@ def lorenz_jac(x):
     J[2,0] = x[1];     J[2,1] = x[0];  J[2,2] = -beta
     return J
 
+# 稳定点
+
+def gen_stable_pt(sigma, rho, beta):
+    X1 = np.array([0,0,0])
+
 x0 = np.array([1.0, 1.0, 1.0])
 dt = 0.01
-n_step = 5000
+n_step = 10000
 renorm_step = 10
 
 t, lams = lyapunov_nd(lorenz_rhs,
                       lorenz_jac,
                       x0, dt, 10000, n_step, renorm_step)
-
 print(lams[-1])
 
 # 绘图
