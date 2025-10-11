@@ -119,7 +119,7 @@ if __name__ == '__main__':
     x0 = np.array([1.0, 1.0, 1.0])
     
     # r值的范围
-    r_arr = np.arange(1.0, 40.0, 0.5)
+    r_arr = np.linspace(0.0, 40.0, 10000)
     
     # 执行计算
     lyapunov_spectrum = calculate_lyapunov_for_r_arr(r_arr, x0, dt, n_warm, n_step, n_renorm)

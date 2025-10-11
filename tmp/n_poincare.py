@@ -7,19 +7,19 @@ import time
 @nb.njit()
 def lorentz_poincare_single(r, sigma, beta, dt, n_warm, n_search, max_pt=100, X0=np.array([0.,0.,0.])):
     
-    def df(x, r, sigma, beta):
-        return np.array([sigma * (x[1] - x[0]),
-                         x[0] * (r - x[2]) - x[1],
-                         x[0] * x[1] - beta * x[2]])
+    def df(X, r, sigma, beta):
+        return np.array([sigma * (X[1] - X[0]),
+                         X[0] * (r - X[2]) - X[1],
+                         X[0] * X[1] - beta * X[2]])
 
     # 预热
     X = X0.copy()
     for _ in range(n_warm):
-        k1 = dt * df(X, r, sigma, beta)
-        k2 = dt * df(X + 0.5 * k1, r, sigma, beta)
-        k3 = dt * df(X + 0.5 * k2, r, sigma, beta)
-        k4 = dt * df(X + k3, r, sigma, beta)
-        X += (k1 + 2 * k2 + 2 * k3 + k4) / 6.0
+        k1 = df(X, r, sigma, beta)
+        k2 = df(X + 0.5 * dt * k1, r, sigma, beta)
+        k3 = df(X + 0.5 * dt * k2, r, sigma, beta)
+        k4 = df(X + dt * k3, r, sigma, beta)
+        X += (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
 
     z0 = r - 1.0 # 截面
     pts = np.empty((n_search, 2))
@@ -27,11 +27,11 @@ def lorentz_poincare_single(r, sigma, beta, dt, n_warm, n_search, max_pt=100, X0
 
     for _ in range(n_search):
         X_old = X.copy()
-        k1 = dt * df(X, r, sigma, beta)
-        k2 = dt * df(X + 0.5 * k1, r, sigma, beta)
-        k3 = dt * df(X + 0.5 * k2, r, sigma, beta)
-        k4 = dt * df(X + k3, r, sigma, beta)
-        X += (k1 + 2 * k2 + 2 * k3 + k4) / 6.0
+        k1 = df(X, r, sigma, beta)
+        k2 = df(X + 0.5 * dt * k1, r, sigma, beta)
+        k3 = df(X + 0.5 * dt * k2, r, sigma, beta)
+        k4 = df(X + dt * k3, r, sigma, beta)
+        X += (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
 
         z_old = X_old[2]
         z_new = X[2]
