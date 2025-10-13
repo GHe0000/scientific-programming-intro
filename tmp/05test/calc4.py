@@ -11,30 +11,30 @@ def rossler_lyapunov_max_single(b, a, c, dt, n_warm, n_sample, n_renorm, X0=np.a
                      b+X[2]*(X[0]-c)])
     X = X0.copy()
     for _ in range(n_warm):
-        X = X + df(X, a, b, c) * dt
-        # k1 = df(X, a, b, c)
-        # k2 = df(X + 0.5 * dt * k1, a, b, c)
-        # k3 = df(X + 0.5 * dt * k2, a, b, c)
-        # k4 = df(X + dt * k3, a, b, c)
-        # X += (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
+        # X = X + df(X, a, b, c) * dt
+        k1 = df(X, a, b, c)
+        k2 = df(X + 0.5 * dt * k1, a, b, c)
+        k3 = df(X + 0.5 * dt * k2, a, b, c)
+        k4 = df(X + dt * k3, a, b, c)
+        X += (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
 
     lambda_sum = 0.
     n_cycles = n_sample // n_renorm
     X_p = X + Delta0
     for cycle in range(n_cycles):
         for _ in range(n_renorm):
-            X = X + df(X, a, b, c) * dt
-            X_p = X_p + df(X_p, a, b, c) * dt
-            # k1 = df(X, a, b, c)
-            # k2 = df(X + 0.5 * dt * k1, a, b, c)
-            # k3 = df(X + 0.5 * dt * k2, a, b, c)
-            # k4 = df(X + dt * k3, a, b, c)
-            # X += (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
-            # k1 = df(X_p, a, b, c)
-            # k2 = df(X_p + 0.5 * dt * k1, a, b, c)
-            # k3 = df(X_p + 0.5 * dt * k2, a, b, c)
-            # k4 = df(X_p + dt * k3, a, b, c)
-            # X_p += (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
+            # X = X + df(X, a, b, c) * dt
+            # X_p = X_p + df(X_p, a, b, c) * dt
+            k1 = df(X, a, b, c)
+            k2 = df(X + 0.5 * dt * k1, a, b, c)
+            k3 = df(X + 0.5 * dt * k2, a, b, c)
+            k4 = df(X + dt * k3, a, b, c)
+            X += (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
+            k1 = df(X_p, a, b, c)
+            k2 = df(X_p + 0.5 * dt * k1, a, b, c)
+            k3 = df(X_p + 0.5 * dt * k2, a, b, c)
+            k4 = df(X_p + dt * k3, a, b, c)
+            X_p += (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4)
 
         Delta = X - X_p
         d0 = np.linalg.norm(Delta0)
@@ -50,14 +50,18 @@ def rossler_lyapunov_max(b_arr, a, c, dt, n_warm, n_sample, n_renorm, X0=np.arra
     for i in nb.prange(n_r):
         lyapunov_arr[i] = rossler_lyapunov_max_single(b_arr[i], a, c, dt, n_warm, n_sample, n_renorm, X0, Delta0, offset)
     return lyapunov_arr
+
 a = 0.2
 c = 5.7
-b_arr = np.linspace(0.2, 2.0, 400)
 
-dt = 0.01          # 积分时间步长
-n_warm = 50000     # 预热步数 (演化 200 个时间单位)
-n_sample = 500000  # 采样总步数 (演化 5000 个时间单位)
-n_renorm = 10      # 重正化间隔 (每 0.1 个时间单位)
+b_arr = np.linspace(0.2, 2.0, 1000)
+
+dt = 0.01
+n_warm = 10000
+n_sample = 50000
+n_renorm = 10
+
+X0 = np.array([2.5,0.,0.])
 
 start_time = time.time()
 
@@ -68,11 +72,14 @@ mle_values = rossler_lyapunov_max(
     dt=dt, 
     n_warm=n_warm, 
     n_sample=n_sample, 
-    n_renorm=n_renorm
+    n_renorm=n_renorm,
+    X0=X0
 )
 
 end_time = time.time()
 print(f"计算完成，耗时: {end_time - start_time:.2f} 秒")
+
+
 fig, ax = plt.subplots(figsize=(12, 7))
 ax.plot(b_arr, mle_values, lw=2, color='b', label='$\\lambda_{max}$')
 ax.axhline(0, color='red', linestyle='--', lw=1.5, label='$\\lambda_{max}=0$')
