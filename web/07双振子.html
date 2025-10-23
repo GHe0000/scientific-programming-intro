@@ -7685,15 +7685,15 @@ $$</p>
 $$</p>
 <p>其对应的本征向量为：</p>
 <p>$$
-a_1 = \frac{1}{\sqrt 2}(1,1)^T, \quad a_2 = \frac{1}{\sqrt 2} (1,-1)^T
+a_1 = \frac{1}{2}(1,1)^T, \quad a_2 = \frac{1}{2} (1,-1)^T
 $$</p>
 <p>从而得到模态矩阵：$A=(a_1,a_2)$. 模态矩阵给出了广义坐标 $x$ 与简正坐标 $Q$ 之间的变换关系：</p>
 <p>$$ Q = A^{-1} x $$</p>
 <p>从而有：</p>
 <p>$$
 \begin{aligned}
-Q_1 = \frac 1 2 (x_1 + x_2), \quad &amp; Q_2 = \frac 1 2 (x_1 - x_2) \\
-x_1 = Q_1 + Q_2, \quad &amp; x_2 = Q_1 - Q_2
+Q_1 = x_1 + x_2, \quad &amp; Q_2 = x_1 - x_2 \\
+x_1 = \frac 1 2 (Q_1 + Q_2), \quad &amp; x_2 = \frac 1 2 (Q_1 - Q_2)
 \end{aligned}
 $$</p>
 <p>由于 $Q_1,Q_2$ 正交（线性代数，不同特征值），因此两者独立，各自以 $\omega_1,\omega_2$ 振动，因此：</p>
@@ -7716,16 +7716,16 @@ $$</p>
 <p>又因为：</p>
 <p>$$
 \begin{aligned}
-\dot{Q_1} = \frac 1 {2m} (p_1 + p_2) \\
-\dot{Q_2} = \frac 1 {2m} (p_1 - p_2)
+\dot{Q_1} = \frac 1 {m} (p_1 + p_2) \\
+\dot{Q_2} = \frac 1 {m} (p_1 - p_2)
 \end{aligned}
 $$</p>
 <p>求解 $A_1,A_2$，得：</p>
 <p>$$
-A_1 = \frac{1}{\omega_1} \left( \frac{p_1 + p_2}{2m} \right)
+A_1 = \frac{1}{\omega_1} \left( \frac{p_1 + p_2}{m} \right)
 $$
 $$
-A_2 = \frac{1}{\omega_2} \left( \frac{p_1 - p_2}{2m} \right)
+A_2 = \frac{1}{\omega_2} \left( \frac{p_1 - p_2}{m} \right)
 $$</p>
 </div>
 </div>
@@ -7747,7 +7747,9 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>$$
-x_1 = Q_1 + Q_2, \quad x_2 = Q_1 - Q_2
+\begin{aligned}
+x_1 = \frac 1 2 (Q_1 + Q_2), \quad &amp; x_2 = \frac 1 2 (Q_1 - Q_2)
+\end{aligned}
 $$</p>
 <p>$$
 \begin{aligned}
@@ -7760,11 +7762,88 @@ $$</p>
 \omega_1 = \sqrt{k/m}, \quad \omega_2 = \sqrt{3k/m}
 $$</p>
 <p>$$
-A_1 = \frac{1}{\omega_1} \left( \frac{p_1 + p_2}{2m} \right)
+A_1 = \frac{1}{\omega_1} \left( \frac{p_1 + p_2}{m} \right)
 $$
 $$
-A_2 = \frac{1}{\omega_2} \left( \frac{p_1 - p_2}{2m} \right)
+A_2 = \frac{1}{\omega_2} \left( \frac{p_1 - p_2}{m} \right)
 $$</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=52e4e94d-4101-4a5a-bc46-0121d7ba30e2">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="%E4%BD%9C%E7%94%A8%E9%87%8F-%E8%A7%92%E9%87%8F%E8%A1%A8%E7%A4%BA">作用量-角量表示<a class="anchor-link" href="#%E4%BD%9C%E7%94%A8%E9%87%8F-%E8%A7%92%E9%87%8F%E8%A1%A8%E7%A4%BA">¶</a></h4>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d0d0e5c0-0e67-4646-85b8-c7e50e79f73f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>现在我们有简正坐标 $Q_1,Q_2$，我们希望求出其共轭动量，保证其仍然满足正则方程.</p>
+<p>我们设：</p>
+<p>$$
+\begin{aligned}
+P_1 = a p_1 + b p_2 \\
+P_2 = c p_1 + d p_2
+\end{aligned}
+$$</p>
+<p>根据哈密顿力学的中的要求，我们需要 $P_1,P_2,Q_1,Q_2$ 满足泊松括号 $[Q_i,P_j] = \delta_ij$，$[Q_i,Q_j]=[P_i,P_j]=0$. 其中：</p>
+<p>$$
+[Q_i,P_j] = \sum_{k=1}^2 \frac{\partial Q_i}{\partial x_k}\frac{\partial P_j}{\partial p_k} - \frac{\partial Q_i}{\partial p_k}\frac{\partial P_j}{\partial x_k}
+$$</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=350120e3-7668-4bf7-86ec-69721f4cf3bd">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>注意到 $\partial_{p_k} Q_i = \partial_{x_k} P_i =0$. 因此：</p>
+<ul>
+<li>$a+b=1$</li>
+<li>$c+d=0$</li>
+<li>$a-b=0$</li>
+<li>$c-d=1$</li>
+</ul>
+<p>解得：$a=b=c=-d=1/2$</p>
+<p>因此：</p>
+<p>$$
+\begin{aligned}
+P_1 = \frac 1 2 (p_1 + p_2) \\
+P_2 = \frac 1 2 (p_1 - p_2)
+\end{aligned}
+$$</p>
+<p>此时哈密顿量用 $P_1,P_2,Q_1,Q_2$ 表示：</p>
+<p>$$
+H = H_1 + H_2
+$$</p>
+<p>其中</p>
+<p>$$
+\begin{aligned}
+H_1 = \frac{P_1^2}{m} + \frac{k}{4} Q_1^2 \\
+H_2 = \frac{P_2^2}{m} + \frac{3k}{4} Q_2^2
+\end{aligned}
+$$</p>
+<p>对于 $H_1$，类似上一次作业谐振子，有：</p>
+<p>$$
+I_1 = \frac{1}{2\pi} \oint P_1 d Q_1 = \frac{E_1}{\omega_1},\quad \theta_1 = \omega_1 t
+$$</p>
+<p>其中 $E_1$ 为第一个简正模的能量：$E_1 = P_1^2/m + k Q_1^2 / 4$</p>
+<p>同理：</p>
+<p>$$
+I_2 = \frac{E_2}{\omega_2} \quad, \theta_2 = \omega_2 t
+$$</p>
+<p>其中 $E_2$ 为第二个简正模的能量：$E_2 = P_2^2/m + 3 k Q_2^2/4$</p>
+<p>显然，对于简谐的情况，两个简正模的能量不会发生变化.</p>
 </div>
 </div>
 </div>
@@ -7799,7 +7878,35 @@ $$</p>
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3aa753e6-b933-411a-a1fd-aa03586942ea">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>其中：</p>
+<p>$$ V'(x) = k x + \alpha x^2 + \beta x^3 $$</p>
+<p>$$
+\begin{aligned}
+f_1 = -\frac{\partial H}{\partial x_1} = -V'(x_1) + V'(x_2 - x_1) \\
+f_1 = -\frac{\partial H}{\partial x_2} = V'(-x_2) - V'(x_2 - x_1)
+\end{aligned}
+$$</p>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs jp-mod-noInput" id="cell-id=e7a0d178-4909-4bde-9759-2d7f028d58d2">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=4b3185b6-55e4-40d5-a8d4-e4dc8d996b32">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>另外，我们定义 $(x_1,x_2,p_1,p_2)$ 与 $(Q_1,Q_2,P_1,P_2)$ 之间的变换函数：</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs jp-mod-noInput" id="cell-id=1dc0317d-0cb2-4325-94ee-b7d910550113">
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput" id="cell-id=ca229abc-0117-41d1-b080-968206eeed33">
 <div class="jp-Cell-outputWrapper">
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
@@ -7823,6 +7930,16 @@ $$</p>
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=337c425e-0a53-4a16-8094-ce442c6d2596">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="%E5%AE%9A%E4%B9%89">定义<a class="anchor-link" href="#%E5%AE%9A%E4%B9%89">¶</a></h3>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=dfa9b5f3-f71c-4b79-b948-e8c1e61954aa">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -7832,6 +7949,47 @@ $$</p>
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b2268626-a5ca-431f-9c2c-f82175e437dd">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>由于在 $(Q_1,Q_2,P_1,P_2)$ 中计算比较方便，因此下面我们迭代使用 $(Q_1,Q_2,P_1,P_2)$ 作为坐标.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=dffb7a3e-18d4-469c-b1eb-dc8a95b29196">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>注意此时（将哈密顿量用新坐标表示）：</p>
+<p>$$
+H = \frac{P_1^2}{m} + \frac{P_2^2}{m} + \frac{Q_{1}^{4} \beta}{32} + \frac{3 Q_{1}^{2} Q_{2}^{2} \beta}{16} + \frac{Q_{1}^{2} Q_{2} \alpha}{4} + \frac{Q_{1}^{2} k}{4} + \frac{9 Q_{2}^{4} \beta}{32} - \frac{Q_{2}^{3} \alpha}{4} + \frac{3 Q_{2}^{2} k}{4}
+$$</p>
+<p>$$
+\frac{\partial V}{\partial Q_1} = \frac{Q_{1}^{3} \beta}{8} + \frac{3 Q_{1} Q_{2}^{2} \beta}{8} + \frac{Q_{1} Q_{2} \alpha}{2} + \frac{Q_{1} k}{2}
+$$</p>
+<p>$$
+\frac{\partial V}{\partial Q_2} = \frac{3 Q_{1}^{2} Q_{2} \beta}{8} + \frac{Q_{1}^{2} \alpha}{4} + \frac{9 Q_{2}^{3} \beta}{8} - \frac{3 Q_{2}^{2} \alpha}{4} + \frac{3 Q_{2} k}{2}
+$$</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs jp-mod-noInput" id="cell-id=230bd1f8-442c-45cf-9c9b-cdc038f6828e">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7127159e-10eb-4fcb-b139-ed90a0e5c7cf">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>庞加莱截面绘制</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs jp-mod-noInput" id="cell-id=540c5260-3872-486d-a185-e23a1749b23f">
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3180c65a-6f56-4b42-a22c-6a7dfd7ecd88">
 <div class="jp-Cell-inputWrapper" tabindex="0">
