@@ -82,11 +82,10 @@ def leapfrog_tangent_step(X, Q_mat, m, k, alpha, beta, dt):
 # -----------------------------------------------------------------
 
 @nb.njit(cache=True)
-def hamiltonian_lyapunov_single(E, m, k, alpha, beta, dt, n_sample, n_renorm, offset=1e-300):
+def lyapunov_single(E, m, k, alpha, beta, dt, n_sample, n_renorm, offset=1e-300):
     P2_0 = np.sqrt(0.5 * m * E) 
     P1_0 = np.sqrt(0.5 * m * E)
-    # Q = np.array([0.0, 0.0, P1_0, P2_0]).reshape(1, 4)
-    X = np.array([0.0, 0.0, P1_0, P2_0]) # 初始状态 X0
+    X = np.array([0.0, 0.0, P1_0, P2_0])
 
     dim = 4
     Q_mat = np.eye(dim)
@@ -104,11 +103,11 @@ def hamiltonian_lyapunov_single(E, m, k, alpha, beta, dt, n_sample, n_renorm, of
     return lambda_sum / (n_cycles * n_renorm * dt)
 
 @nb.njit(parallel=True, cache=True)
-def hamiltonian_lyapunov_E(E_arr, m, k, alpha, beta, dt, n_sample, n_renorm, offset=1e-300):
+def lyapunov_n(E_arr, m, k, alpha, beta, dt, n_sample, n_renorm, offset=1e-300):
     n_E = len(E_arr)
     lyapunov_arr = np.zeros((n_E, 4))
     for i in nb.prange(n_E):
-        lyapunov_arr[i] = hamiltonian_lyapunov_single(E_arr[i], m, k, alpha, beta, 
+        lyapunov_arr[i] = lyapunov_single(E_arr[i], m, k, alpha, beta, 
                                                        dt, n_sample, n_renorm, offset)
     return lyapunov_arr
 
@@ -127,7 +126,7 @@ if __name__ == "__main__":
     n_renorm = 50
 
     start_time = time.time()
-    lyapunov_arr = hamiltonian_lyapunov_E(E_arr, m, k, alpha, beta, 
+    lyapunov_arr = lyapunov_n(E_arr, m, k, alpha, beta, 
                                         dt, n_sample, n_renorm)
     print(f"{time.time() - start_time}")
 
