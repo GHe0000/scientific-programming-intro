@@ -6,6 +6,11 @@
 
 <https://ghe0000.github.io/scientific-programming-intro/>
 
+> [!NOTE]
+> 上述网站现在可以在如下更简短的网址访问：
+> <https://spi.ghe0000.pp.ua>
+
+
 仓库结构
 - `Tools` 中是我写的可以复用的代码
 - `tmp` 中是临时的测试用的代码
