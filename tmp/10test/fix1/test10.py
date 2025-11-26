@@ -88,8 +88,10 @@ t_end = time.time()
 print(f"Calc done. {t_end - t_start:.3f}")
 
 # Plot
-plt.plot(T_arr, x_avg_arr[:,0], label="0")
-plt.plot(T_arr, x_avg_arr[:,1], label="1")
+plt.plot(T_arr, x_avg_arr[:,0], label="$x_1$")
+plt.plot(T_arr, x_avg_arr[:,1], label="$x_2$")
+plt.xlabel("T")
+plt.ylabel("x")
 plt.legend()
 plt.show()
 

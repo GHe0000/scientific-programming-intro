@@ -1,8 +1,8 @@
+
 import numpy as np
 import numba as nb
 
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 
 import time
 
@@ -46,30 +46,8 @@ t_start = time.time()
 samples_arr = samples_T_arr(T_arr, k, alpha, beta, n_samples)
 print(f"Time: {time.time() - t_start:.3f}")
 
-def plot_func(ax, samples, T_arr, n_bins=100):
-    n_T, n_samples = samples.shape
-    flat_data = samples.flatten()
-    y_min = np.min(flat_data)
-    y_max = np.max(flat_data)
-    bins = np.linspace(y_min, y_max, n_bins+1)
-    density = np.empty((n_T, n_bins))
+x_avg = np.mean(samples_arr, axis=1)
 
-    for i in range(n_T):
-        hist, _ = np.histogram(samples[i,:], bins=bins, density=True)
-        density[i,:] = hist
-    density = density + 1e-300
-    norm = mpl.colors.LogNorm(vmin=1e-10, vmax=np.max(density))
-    im = ax.imshow(density.T, 
-                   extent=[T_arr[0], T_arr[-1], y_min, y_max], 
-                   origin='lower',
-                   aspect='auto',
-                   cmap='viridis',
-                   norm=norm)
-    plt.colorbar(im, ax=ax, label="Density(log)")
-    return ax
-
-fig, ax = plt.subplots(figsize=(8,6))
-plot_func(ax, samples_arr, T_arr)
-ax.set_xlabel("Temperature (T)")
-ax.set_ylabel("Position (x)")
+plt.plot(T_arr, x_avg)
 plt.show()
+
