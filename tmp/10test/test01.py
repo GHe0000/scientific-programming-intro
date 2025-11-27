@@ -24,7 +24,7 @@ def metropolis_samples_full(T, k, alpha, beta, n_samples, step_size=1.0):
         samples[i] = X
     return samples
 
-T = 1.0
+T = 0.008
 k = 1.0
 alpha = 2.0
 beta = 1.0

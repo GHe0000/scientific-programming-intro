@@ -32,11 +32,11 @@ def samples_T_arr(T_arr, k, alpha, beta, n_samples, step_size=1.0):
         ret[i] = metropolis_samples(T_arr[i], k, alpha, beta, n_samples, step_size)
     return ret
 
-T_arr = np.linspace(0.001, 2, 100)
+T_arr = np.linspace(0.0001, 0.15, 100)
 n_samples = int(1e6)
 k = 1.0
-alpha = 0.0
-beta = 0.0
+alpha = 2.0
+beta = 1.0
 
 print("Build...")
 _ = samples_T_arr(T_arr[:2], k, alpha, beta, n_samples)
