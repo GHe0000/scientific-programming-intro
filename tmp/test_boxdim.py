@@ -1,17 +1,13 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from tools import boxdim
+import boxdim
 
-# ==== 各种几何/分形生成函数 ====
-
-# 圆
-def circle(n=2000):
+def circle(n=20000):
     theta = np.linspace(0, 2*np.pi, n)
     return np.column_stack([np.cos(theta), np.sin(theta)])
 
-# 正方形边界
-def square_boundary(n=500):
+def square_boundary(n=20000):
     t = np.linspace(0, 1, n)
     top = np.column_stack([t, np.ones_like(t)])
     bottom = np.column_stack([t, np.zeros_like(t)])
@@ -19,13 +15,11 @@ def square_boundary(n=500):
     right = np.column_stack([np.ones_like(t), t])
     return np.vstack([top, bottom, left, right])
 
-# 填满正方形
-def filled_square(n=10000):
+def filled_square(n=50000):
     x = np.random.rand(n)
     y = np.random.rand(n)
     return np.column_stack([x, y])
 
-# 康托集 (只在x轴)
 def cantor_set(level=8):
     segments = [(0, 1)]
     for _ in range(level):
@@ -41,8 +35,7 @@ def cantor_set(level=8):
         points.append(np.column_stack([x, np.zeros_like(x)]))
     return np.vstack(points)
 
-# Sierpinski 三角形
-def sierpinski_triangle(n=50000):
+def sierpinski_triangle(n=100000):
     verts = np.array([[0,0],[1,0],[0.5,np.sqrt(3)/2]])
     p = np.random.rand(2)
     pts = []
@@ -52,8 +45,7 @@ def sierpinski_triangle(n=50000):
         pts.append(p)
     return np.array(pts)
 
-# Sierpinski Carpet
-def sierpinski_carpet(n=50000):
+def sierpinski_carpet(n=100000):
     p = np.random.rand(2)
     pts = []
     for _ in range(n):
@@ -64,14 +56,19 @@ def sierpinski_carpet(n=50000):
         pts.append(p)
     return np.array(pts)
 
-# ==== 通用计算和绘制函数 ====
+def random_walk_1d(n=500000):
+    steps = np.random.choice([-1, 1], size=n)
+    path = np.cumsum(steps)
+    t = np.linspace(0, 1, n)
+    path_norm = (path - path.min()) / (path.max() - path.min())
+    return np.column_stack([t, path_norm])
+
 def analyze(points, name, theory_dim=None, m_list=None):
     if m_list is None:
-        m_list = np.arange(10, 200, 10)
+        m_list = np.arange(100, 1000, 100)
     counts = [boxdim.count_occupied_boxes(points, m) for m in m_list]
     k, b = np.polyfit(np.log(m_list), np.log(counts), 1)
 
-    # log-log 图
     fig, ax = plt.subplots()
     ax.set_xscale("log")
     ax.set_yscale("log")
@@ -86,7 +83,6 @@ def analyze(points, name, theory_dim=None, m_list=None):
     ax.legend()
     plt.show()
 
-    # 可视化覆盖
     fig, ax = plt.subplots()
     boxdim.visualize_boxes(points, m=30, ax=ax, facecolor="skyblue", alpha=0.4, edgecolor="gray")
     ax.plot(points[:,0], points[:,1], "k.", markersize=1)
@@ -98,9 +94,10 @@ def analyze(points, name, theory_dim=None, m_list=None):
 
 
 # ==== 测试 ====
-analyze(circle(), "Circle", theory_dim=1.0)
-analyze(square_boundary(), "Square boundary", theory_dim=1.0)
-analyze(filled_square(), "Filled square", theory_dim=2.0)
-analyze(cantor_set(), "Cantor set", theory_dim=np.log(2)/np.log(3))
-analyze(sierpinski_triangle(), "Sierpinski triangle", theory_dim=np.log(3)/np.log(2))
-analyze(sierpinski_carpet(), "Sierpinski carpet", theory_dim=np.log(8)/np.log(3))
+# analyze(circle(), "Circle", theory_dim=1.0)
+# analyze(square_boundary(), "Square boundary", theory_dim=1.0)
+# analyze(filled_square(), "Filled square", theory_dim=2.0)
+# analyze(cantor_set(), "Cantor set", theory_dim=np.log(2)/np.log(3))
+# analyze(sierpinski_triangle(), "Sierpinski triangle", theory_dim=np.log(3)/np.log(2))
+# analyze(sierpinski_carpet(), "Sierpinski carpet", theory_dim=np.log(8)/np.log(3))
+analyze(random_walk_1d(), "1D Random Walk", theory_dim=1.5)
