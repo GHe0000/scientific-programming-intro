@@ -5,38 +5,36 @@ import matplotlib.colors as mcolors
 
 @nb.njit(parallel=True, cache=True)
 def calc_mandelbrot(xmin, xmax, ymin, ymax, width, height, max_iter, tol, max_period):
-    escape_map = np.zeros((height, width), dtype=np.int32)
-    period_map = np.zeros((height, width), dtype=np.int32)
+    esc_map = np.zeros((height, width), dtype=np.int32)
+    per_map = np.zeros((height, width), dtype=np.int32)
     dx = (xmax - xmin) / width
     dy = (ymax - ymin) / height
     for y in nb.prange(height):
-        c_im = ymin + y * dy
         for x in range(width):
-            c_re = xmin + x * dx
-            c = complex(c_re, c_im)
+            c = complex(xmin + x * dx, ymin + y * dy)
             z = 0j
-            escaped = False
+            is_esc = False
             iter_count = 0
             for i in range(max_iter):
                 if z.real*z.real + z.imag*z.imag > 4.0:
-                    escaped = True
+                    is_esc = True
                     iter_count = i
                     break
                 z = z*z + c
-            if escaped:
-                escape_map[y, x] = iter_count
-                period_map[y, x] = 0 
+            if is_esc:
+                esc_map[y, x] = iter_count
+                per_map[y, x] = 0 
             else:
-                escape_map[y, x] = max_iter
-                z_snapshot = z  # 记录当前稳定状态
+                esc_map[y, x] = max_iter
+                z0 = z  # 记录当前稳定状态
                 found_p = -1    # 默认 -1 (代表未知周期或高阶周期)
                 for p in range(1, max_period + 1):
                     z = z*z + c
-                    if abs(z - z_snapshot) < tol:
+                    if abs(z - z0) < tol:
                         found_p = p
                         break
-                period_map[y, x] = found_p
-    return escape_map, period_map
+                per_map[y, x] = found_p
+    return esc_map, per_map
 
 width, height = 1600, 1400
 xmin, xmax = -2.0, 0.6
