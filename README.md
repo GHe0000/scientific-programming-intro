@@ -1,5 +1,7 @@
 # scientific-programming-intro
 
+[![wakatime](https://wakatime.com/badge/user/70908aa3-b2c6-4f44-a07f-7bd45f260e48/project/7bf39e59-0afb-47da-b655-31c34004d435.svg)](https://wakatime.com/badge/user/70908aa3-b2c6-4f44-a07f-7bd45f260e48/project/7bf39e59-0afb-47da-b655-31c34004d435)
+
 2025 厦门大学 《科学编程入门》课程 代码仓库（22920242203150）
 
 该仓库使用 GitHub Page 进行托管，仓库中所有 `ipynb` 生成的 `html` 可以通过如下链接访问查看（带有公式渲染）：
